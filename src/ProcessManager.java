@@ -3,9 +3,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+
 
 public class ProcessManager implements MigratableProcess, Runnable,Serializable {
     
@@ -16,10 +18,9 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
     private Socket connection;
     private int ID;
     
-    HashMap<Integer,HashMap<String,Integer>> ProcessTable = new HashMap<Integer,HashMap<String,Integer>>();
-	
+    public static HashMap<Integer,HashMap<InetAddress,Integer>> ProcessTable = new HashMap<Integer,HashMap<InetAddress,Integer>>();
+    
     public ProcessManager(String ipAddress, int port) {
-		// TODO Auto-generated constructor stub
 		this.Ipaddress= ipAddress;
 		this.port = port;
 	}
@@ -27,6 +28,10 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 	public ProcessManager(Socket SOCK, int i) {
 		this.connection = SOCK;
 		this.ID = i;
+	}
+
+	public ProcessManager() {
+	
 	}
 
 	public void createConnection() throws IOException{
@@ -38,7 +43,7 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		    try {
 			Socket clientSocket = ss.accept();
 			conn++;
-			ProcessConnection newconn = new ProcessConnection(clientSocket, conn, this);
+			slaveProcessConnection newconn = new slaveProcessConnection(clientSocket, conn, this);
 			new Thread(newconn).start();
 		    }   
 		    catch (IOException e) {
@@ -103,7 +108,7 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 	
 }
 
-class ProcessConnection implements Runnable{
+class slaveProcessConnection implements Runnable {
 	  ProcessManager server;
 	  Socket SOCK;
 	  int id;
@@ -111,11 +116,18 @@ class ProcessConnection implements Runnable{
       PrintStream ps = null;
       boolean done = false;
 	  
-      public ProcessConnection(Socket clientSocket, int id, ProcessManager pm) {
-			this.SOCK = clientSocket;
+      HashMap<InetAddress,Integer> SocketTable = new HashMap<InetAddress,Integer>();
+     
+      public slaveProcessConnection(Socket client, int id, ProcessManager pm) {
+			this.SOCK = client;
 			this.id = id;
 			this.server = pm;
 			System.out.println( "Connection " + id + " established with: " + SOCK );
+			SocketTable.put(client.getInetAddress(), client.getPort());
+			//System.out.println(SocketTable.entrySet());
+			ProcessManager.ProcessTable.put(id,SocketTable);
+			
+			//System.out.println(pm.ProcessTable.entrySet());
 			try {
 			    br = new BufferedReader(new InputStreamReader(SOCK.getInputStream()));
 			    ps = new PrintStream(SOCK.getOutputStream());
@@ -129,16 +141,18 @@ class ProcessConnection implements Runnable{
 			try {
 				String message = br.readLine();
 				System.out.println( "Received " + message + " from connection " + id + "." );
-				ps.println("welcome client " +  id );
+				ps.println(" \n welcome client " +  id );
 				if(message == "close"){
 					System.out.println( "Connection " + id + " closed." );
-		            br.close();
-		            ps.close();
-		            SOCK.close();
+		             br.close();
+		             ps.close();
+		             SOCK.close();
 		            break;
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				//System.exit(1);
+				System.out.println( "Connection " + id + " closed." );
+				break;
 			}
 		 
 		
