@@ -38,8 +38,8 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		    try {
 			Socket clientSocket = ss.accept();
 			conn++;
-			ProcessConnection oneconnection = new ProcessConnection(clientSocket, conn, this);
-			new Thread(oneconnection).start();
+			ProcessConnection newconn = new ProcessConnection(clientSocket, conn, this);
+			new Thread(newconn).start();
 		    }   
 		    catch (IOException e) {
 			System.out.println(e);
