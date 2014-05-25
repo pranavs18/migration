@@ -5,14 +5,14 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
+import java.util.HashMap;
 
 public class ProcessManager implements MigratableProcess, Runnable,Serializable {
     
 	private static final long serialVersionUID = 1L;
 	private String Ipaddress = null;
     private int port ;
-
+    HashMap<Integer,HashMap<String,Integer>> processTable = new HashMap<Integer,HashMap<String,Integer>>();
 	public ProcessManager(String ipAddress, int port) {
 		// TODO Auto-generated constructor stub
 		this.Ipaddress= ipAddress;
