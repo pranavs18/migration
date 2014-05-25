@@ -5,14 +5,14 @@ import java.io.PrintStream;
 import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
+import java.net.UnknownHostException;
 
 public class ProcessManager implements MigratableProcess, Runnable,Serializable {
     
 	private static final long serialVersionUID = 1L;
 	private String Ipaddress = null;
     private int port ;
-    HashMap<Integer,HashMap<String,Integer>> processTable = new HashMap<Integer,HashMap<String,Integer>>();
+
 	public ProcessManager(String ipAddress, int port) {
 		// TODO Auto-generated constructor stub
 		this.Ipaddress= ipAddress;
@@ -26,17 +26,28 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		ServerSocket ss = null;
 		while(!done){
 			try {
+				 System.out.println("Process Manager started : Status Running : IpAddress:" + this.Ipaddress + "Port: " + this.port );
 				 ss = new ServerSocket(this.port);
 				Socket SOCK = ss.accept();
 				InputStreamReader isr = new InputStreamReader(SOCK.getInputStream());
 				BufferedReader br = new BufferedReader(isr);
+				System.out.println("Is connected? "+SOCK.isConnected());
+				int count = 0;
+				String message;
+				while((message = br.readLine()) != null){
 				
-				String message = br.readLine();
+				System.out.println(message);
+				
+				
 				if(message != null){
+					
 					PrintStream ps = new PrintStream(SOCK.getOutputStream());
-					System.out.println(ps.toString());
+					ps.println("hello "+ (count++) );
+					
+					
 				}
 				
+				}
 			} 
 			catch (IOException e) {
                 e.printStackTrace();
@@ -56,7 +67,8 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		  } catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		  System.out.println("Process Manager started : Status Running : IpAddress:" + this.Ipaddress + "Port: " + this.port );
+		 
+		
 		}
 	}
 		
@@ -94,6 +106,12 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		ProcessManager pm = new ProcessManager(IpAddress,port);
 		pm.run();
 
+	}
+
+	@Override
+	public void launch(String pname) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

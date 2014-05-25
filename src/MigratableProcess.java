@@ -8,8 +8,10 @@ import java.io.Serializable;
 
     public void suspend();
   
-    public void launch(String pname, String Ipaddress, int portno);
+    public void launch(String pname);
     
     public void remove();
+
+	void launch(String pname, String Ipaddress, int portno);
     
 }
