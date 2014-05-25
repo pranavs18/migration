@@ -25,6 +25,7 @@ public class Worker implements Runnable{
 		System.out.print("is connected " + workerSocket.isConnected());
 		
 		out.println("Hello Server");
+		out.flush();
 		int count = 0;
 		while(( readString = in.readLine()) != null){
 			System.out.println(readString);
