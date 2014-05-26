@@ -1,12 +1,25 @@
+import java.io.Serializable;
 
-public class ProcessInformation {
+
+public class ProcessInformation implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	int processID;
-	String processIP;
-	int port;
 	State state;
+	String processName;
 
 	
+	public String getProcessName() {
+		return processName;
+	}
+
+	public void setProcessName(String processName) {
+		this.processName = processName;
+	}
+
 	public int getProcessID() {
 		return processID;
 	}
@@ -15,21 +28,6 @@ public class ProcessInformation {
 		this.processID = processID;
 	}
 
-	public String getProcessIP() {
-		return processIP;
-	}
-
-	public void setProcessIP(String processIP) {
-		this.processIP = processIP;
-	}
-
-	public int getPort() {
-		return port;
-	}
-
-	public void setPort(int port) {
-		this.port = port;
-	}
 
 	public State getState() {
 		return state;

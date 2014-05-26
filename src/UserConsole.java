@@ -1,7 +1,17 @@
 import java.io.*;
 
-public class UserConsole {
+public class UserConsole extends Thread{
 	public static void main(String args[]){
+		ProcessManager pm = new ProcessManager(args[0],Integer.parseInt(args[1]));
+		 System.out.println("Process Manager started : Status Running : IpAddress:" + args[0] + "Port: " + args[1] );
+		/* try {
+			pm.createConnection();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}*/
+		new Thread(pm).start(); 
+		 
 		while(true){
 			int n=0;
 			String pname = null;

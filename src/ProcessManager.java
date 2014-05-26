@@ -30,9 +30,6 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		this.ID = i;
 	}
 
-	public ProcessManager() {
-	
-	}
 
 	public void createConnection() throws IOException{
 		ServerSocket ss = null;
@@ -63,6 +60,13 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 	@Override
 	public void run(){
 		
+		ProcessManager pm = new ProcessManager(Ipaddress,port);
+		try {
+			pm.createConnection();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -84,7 +88,7 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		
 	}
 	
-	public static void main(String args[]) throws IOException{
+	/*public static void main(String args[]) throws IOException{
 		
 		if(args.length != 2){
 			System.out.println("Please provide both the IPaddress and Port number for the process manager to run");
@@ -98,7 +102,7 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		 System.out.println("Process Manager started : Status Running : IpAddress:" + IpAddress + "Port: " + port );
 		pm.createConnection();
 
-	}
+	}*/
 
 	@Override
 	public void launch(String pname) {
@@ -140,7 +144,7 @@ class slaveProcessConnection implements Runnable {
 		while(!done){
 			try {
 				String message = br.readLine();
-				System.out.println( "Received " + message + " from connection " + id + "." );
+		//		System.out.println( "Received " + message + " from connection " + id + "." );
 				ps.println(" \n welcome client " +  id );
 				if(message == "close"){
 					System.out.println( "Connection " + id + " closed." );
