@@ -1,18 +1,15 @@
 import java.io.*;
+import java.net.InetAddress;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class UserConsole extends Thread{
 	public static void main(String args[]){
 		ProcessManager pm = new ProcessManager(args[0],Integer.parseInt(args[1]));
 		 System.out.println("Process Manager started : Status Running : IpAddress:" + args[0] + "Port: " + args[1] );
-		/* try {
-			pm.createConnection();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
-		new Thread(pm).start(); 
+		 new Thread(pm).start(); 
 		 
-		while(true){
+		 while(true){
 			int n=0;
 			String pname = null;
 			while(true){
@@ -48,6 +45,13 @@ public class UserConsole extends Thread{
 			   
 			   case 3:{
 				   System.out.println("Please enter the name of the process you want to migrate");
+				   System.out.println(" \n Please choose the destination IP address and Port for the process from the list below to migrate the example process");
+				   if(ProcessManager.ProcessTable.entrySet().isEmpty()){
+					   System.out.println("\n Please launch a process on any machine to migrate the example process");
+				   }
+				   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
+					   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
+				   }
 				   break;
 			   }
 			   
