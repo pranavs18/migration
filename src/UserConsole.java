@@ -1,4 +1,5 @@
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -30,8 +31,36 @@ public class UserConsole extends Thread{
 				  System.out.println("Please enter the name of the process you want to launch\n");
 				  try {
 				    pname = br.readLine();
+				    /*Reflection code to detect class type at runtime */
+		
+				    try {
+				    	MigratableProcess command = null;
+						try {
+							command = (MigratableProcess)Class.forName(pname).newInstance();
+							
+							
+							
+						} catch (InstantiationException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						}
+		                command.run(); 
+						
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					}
+				    
+				    
 					System.out.println("Choose Ipaddress:port no of the machine on which you want to launch the process");
-				    break;
+					 if(ProcessManager.ProcessTable.entrySet().isEmpty()){
+						   System.out.println("\n Please launch a worker process on any machine to launch the example process on it \n");
+					   }
+					   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
+						   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
+					   }
+					   
+					break;
 				  } catch (IOException e) {
 					e.printStackTrace();
 				   }
