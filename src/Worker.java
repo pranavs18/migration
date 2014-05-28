@@ -43,15 +43,16 @@ public class Worker extends Thread implements Runnable{
 	
 	public void startWorkerHost(String MasterIp, int MasterPort, int workerServerPort) throws UnknownHostException, IOException{
 		
-		Socket masterClientSocket = null; 
-		ServerSocket workerServer = null;
+		 
+		ServerSocket workerServer = new ServerSocket(workerServerPort);
 		
-		workerServer = new ServerSocket(workerServerPort);
-		masterClientSocket = workerServer.accept();
+		//workerServer = new ServerSocket(workerServerPort);
+		//masterClientSocket = workerServer.accept();
 		
 		
 		while(true){
-	
+			
+			Socket masterClientSocket = workerServer.accept();	
 		InputStreamReader input = new InputStreamReader(masterClientSocket.getInputStream());
 		BufferedReader in = new BufferedReader(input);
 		
@@ -74,7 +75,6 @@ public class Worker extends Thread implements Runnable{
 		
 		}
 		
-	workerServer.close();
 	}
 	}
 	
