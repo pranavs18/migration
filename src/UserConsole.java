@@ -1,6 +1,6 @@
 import java.io.*;
-import java.lang.reflect.Method;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -59,11 +59,19 @@ public class UserConsole extends Thread implements Serializable{
 						   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
 					   }
 					   
+					   System.out.println("Enter the IP address from the list \n");
 					   String ipAddress = br.readLine();
-					   int port = Integer.parseInt(br.readLine());
+					   System.out.println("Enter the corresponding port of the IP address you chose above \n");
+					   String port = br.readLine();
 					   String commandName = "Launch";
 					   
 					   
+					   String sendData = commandName + " " + pname ;
+						// Extract the port number from the heartbeat 	   
+					   Socket MasterSocket = new Socket(ipAddress, Integer.parseInt(port));
+					   PrintStream out = new PrintStream(MasterSocket.getOutputStream());
+					   out.println(sendData);
+					   MasterSocket.close();
 					   
 					 }
 					break;
