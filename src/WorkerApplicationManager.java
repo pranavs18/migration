@@ -1,0 +1,55 @@
+
+
+public class WorkerApplicationManager implements Runnable {
+
+	String[] message = null;
+	
+public WorkerApplicationManager(String[] message){
+	
+	this.message = message;
+	
+}
+	
+public void performOperation(){
+
+	
+	long threadID = Thread.currentThread().getId();
+	
+	String processName = message[1];
+	
+	ProcessInformation newProcess = new ProcessInformation();
+	newProcess.setProcessID(-1);
+	newProcess.setProcessName(processName);
+	newProcess.setState(State.RUNNING);
+	newProcess.setThreadID(threadID);
+	
+	Worker.processMap.put(threadID, newProcess);
+
+	if(message[0].equals("Launch")){
+	
+		 try {
+		    	MigratableProcess command = null;
+				try {
+					command = (MigratableProcess)Class.forName(processName).newInstance();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+                command.run(); 
+				
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		    
+		
+	}
+	
+}
+	@Override
+public void run() {
+
+		performOperation();
+	}
+
+}

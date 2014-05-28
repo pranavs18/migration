@@ -33,22 +33,22 @@ public class UserConsole extends Thread implements Serializable{
 				    pname = br.readLine();
 				    /*Reflection code to detect class type at runtime */
 		
-				    try {
-				    	MigratableProcess command = null;
-						try {
-							command = (MigratableProcess)Class.forName(pname).newInstance();						
-							
-						} catch (InstantiationException e) {
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							e.printStackTrace();
-						}
-		                command.run(); 
-						
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					}
-				    
+//				    try {
+//				    	MigratableProcess command = null;
+//						try {
+//							command = (MigratableProcess)Class.forName(pname).newInstance();						
+//							
+//						} catch (InstantiationException e) {
+//							e.printStackTrace();
+//						} catch (IllegalAccessException e) {
+//							e.printStackTrace();
+//						}
+//		                command.run(); 
+//						
+//					} catch (ClassNotFoundException e) {
+//						e.printStackTrace();
+//					}
+//				    
 				    
 					System.out.println("Choose Ipaddress:port no of the machine on which you want to launch the process");
 					 if(ProcessManager.ProcessTable.entrySet().isEmpty()){

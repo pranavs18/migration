@@ -7,10 +7,19 @@ public class ProcessInformation implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	long threadID;
 	int processID;
 	State state;
 	String processName;
+	
+	public long getThreadID() {
+		return threadID;
+	}
 
+	public void setThreadID(long threadID) {
+		this.threadID = threadID;
+	}
 	
 	public String getProcessName() {
 		return processName;
@@ -37,8 +46,5 @@ public class ProcessInformation implements Serializable {
 		this.state = state;
 	}
 	
-	public enum State {
-		RUNNING,TERMINATED,SUSPENDED
-	}
-
+	
 }
