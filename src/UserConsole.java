@@ -4,7 +4,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-public class UserConsole extends Thread{
+public class UserConsole extends Thread implements Serializable{
 	public static void main(String args[]){
 		ProcessManager pm = new ProcessManager(args[0],Integer.parseInt(args[1]));
 		 System.out.println("Process Manager started : Status Running : IpAddress:" + args[0] + "Port: " + args[1] );
@@ -36,9 +36,7 @@ public class UserConsole extends Thread{
 				    try {
 				    	MigratableProcess command = null;
 						try {
-							command = (MigratableProcess)Class.forName(pname).newInstance();
-							
-							
+							command = (MigratableProcess)Class.forName(pname).newInstance();						
 							
 						} catch (InstantiationException e) {
 							e.printStackTrace();
@@ -56,10 +54,18 @@ public class UserConsole extends Thread{
 					 if(ProcessManager.ProcessTable.entrySet().isEmpty()){
 						   System.out.println("\n Please launch a worker process on any machine to launch the example process on it \n");
 					   }
+					 else{
 					   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
 						   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
 					   }
 					   
+					   String ipAddress = br.readLine();
+					   int port = Integer.parseInt(br.readLine());
+					   String commandName = "Launch";
+					   
+					   
+					   
+					 }
 					break;
 				  } catch (IOException e) {
 					e.printStackTrace();
@@ -89,4 +95,5 @@ public class UserConsole extends Thread{
 			}
 		}
 		}
+	
 	}
