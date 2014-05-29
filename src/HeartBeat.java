@@ -35,22 +35,17 @@ public void startHeartBeat(String MasterIp, int MasterPort,int workerServerPort)
 		InputStreamReader input = new InputStreamReader(heartBeatSocket.getInputStream());
 		BufferedReader in = new BufferedReader(input);
 		
-		FileOutputStream processInfoFile =
-		         new FileOutputStream(""+workerServerPort);
-		ObjectOutputStream oos = new ObjectOutputStream(processInfoFile);
-		
 		String readS = "";
 		out.println("Hello "+ workerServerPort);
 		System.out.println("Hello "+ workerServerPort);
 		out.flush();
-		oos.writeObject(Worker.processMap);
+		
 		
 		while((readS = in.readLine())!=null){
 			System.out.println(readS);
 			
 			/* Worker acting as client */
 			out.println("Hello "+ workerServerPort);
-			oos.writeObject(Worker.processMap);
 			out.flush();
 			
 			try {
@@ -63,8 +58,6 @@ public void startHeartBeat(String MasterIp, int MasterPort,int workerServerPort)
 		}
 		
 		/* Closing all opened streams */
-		oos.close();
-		processInfoFile.close();
 	    out.close();
 	    heartBeatSocket.close();
 	}

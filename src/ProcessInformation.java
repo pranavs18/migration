@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.net.InetAddress;
 
 
 public class ProcessInformation implements Serializable {
@@ -8,10 +9,20 @@ public class ProcessInformation implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	InetAddress IP;
 	long threadID;
 	int processID;
 	State state;
 	String processName;
+	
+	public InetAddress getIP() {
+		return IP;
+	}
+
+	public void setIP(InetAddress iP) {
+		IP = iP;
+	}
+
 	
 	public long getThreadID() {
 		return threadID;
