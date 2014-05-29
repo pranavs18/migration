@@ -19,9 +19,7 @@ public class Worker extends Thread implements Runnable{
 	int workerServerPort;
 	
 	//public static int slaveServerPort; /* Slave server will always be between 10000 to 20000 */
-	
-	  
-    
+ 
 	/* This hashmap maintains a list of all the processed in the worker */
 	public static HashMap<Long, ProcessInformation> processMap = new HashMap<Long, ProcessInformation>();
 	
@@ -42,43 +40,33 @@ public class Worker extends Thread implements Runnable{
 	
 	
 	public void startWorkerHost(String MasterIp, int MasterPort, int workerServerPort) throws UnknownHostException, IOException{
-		
-		 
+		@SuppressWarnings("resource")
 		ServerSocket workerServer = new ServerSocket(workerServerPort);
 		
 		//workerServer = new ServerSocket(workerServerPort);
 		//masterClientSocket = workerServer.accept();
-		
-		
 		while(true){
 			
-			Socket masterClientSocket = workerServer.accept();	
+		Socket masterClientSocket = workerServer.accept();	
 		InputStreamReader input = new InputStreamReader(masterClientSocket.getInputStream());
 		BufferedReader in = new BufferedReader(input);
 		
 		String[] arguments;
 		
 		String readString = "";
-		
-		
-		
 		while(( readString = in.readLine()) != null){
-			
 			arguments = readString.split(" ");
 			
 			/* Start a new thread to perform operations as required by the 
 			 * message sent by master
 			 */
 			WorkerApplicationManager wam = new WorkerApplicationManager(arguments);
-			new Thread(wam).start();
-
-		
+			new Thread(wam).start();	
+		}		
+	  
 		}
-		
+	  
 	}
-	}
-	
-	
 	
 	/*
 	 * This thread starts the worker host
@@ -96,14 +84,9 @@ public class Worker extends Thread implements Runnable{
 		
 	}
 	
-	
-	
-	public static void main(String[] args){
-		
-		
+ public static void main(String[] args){
 		
 		if(args.length != 2){
-			
 			System.out.println("Please enter the Arguments of the form - HostIp port");
 			
 		}

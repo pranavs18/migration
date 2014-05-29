@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 public class UserConsole extends Thread implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public static void main(String args[]){
 		ProcessManager pm = new ProcessManager(args[0],Integer.parseInt(args[1]));
 		 System.out.println("Process Manager started : Status Running : IpAddress:" + args[0] + "Port: " + args[1] );
@@ -22,7 +27,6 @@ public class UserConsole extends Thread implements Serializable{
 					
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			   switch(n){
@@ -30,26 +34,7 @@ public class UserConsole extends Thread implements Serializable{
 				  
 				  System.out.println("Please enter the name of the process you want to launch\n");
 				  try {
-				    pname = br.readLine();
-				    /*Reflection code to detect class type at runtime */
-		
-//				    try {
-//				    	MigratableProcess command = null;
-//						try {
-//							command = (MigratableProcess)Class.forName(pname).newInstance();						
-//							
-//						} catch (InstantiationException e) {
-//							e.printStackTrace();
-//						} catch (IllegalAccessException e) {
-//							e.printStackTrace();
-//						}
-//		                command.run(); 
-//						
-//					} catch (ClassNotFoundException e) {
-//						e.printStackTrace();
-//					}
-//				    
-				    
+				    pname = br.readLine();    
 					System.out.println("Choose Ipaddress:port no of the machine on which you want to launch the process");
 					 if(ProcessManager.ProcessTable.entrySet().isEmpty()){
 						   System.out.println("\n Please launch a worker process on any machine to launch the example process on it \n");

@@ -11,12 +11,8 @@ public WorkerApplicationManager(String[] message){
 }
 	
 public void performOperation(){
-
-	
-	long threadID = Thread.currentThread().getId();
-	
+    long threadID = Thread.currentThread().getId();
 	String processName = message[1];
-	
 	ProcessInformation newProcess = new ProcessInformation();
 	newProcess.setProcessID(-1);
 	newProcess.setProcessName(processName);
@@ -30,6 +26,7 @@ public void performOperation(){
 		 try {
 		    	MigratableProcess command = null;
 				try {
+					// java reflection to launch the process whose class name is detected at run time
 					command = (MigratableProcess)Class.forName(processName).newInstance();
 				} catch (InstantiationException e) {
 					e.printStackTrace();
@@ -40,10 +37,7 @@ public void performOperation(){
 				
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
-			}
-		  
-		 
-		
+			}	
 	}
 	System.out.println(Worker.processMap);
 	System.out.println(Worker.processMap.get(Thread.currentThread().getId()).getProcessID());
@@ -59,8 +53,7 @@ public void performOperation(){
 }
 	@Override
 public void run() {
-
-		performOperation();
+     performOperation();
 	}
 
 }

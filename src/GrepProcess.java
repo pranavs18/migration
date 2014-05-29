@@ -40,7 +40,7 @@ public class GrepProcess implements MigratableProcess
 	{
 		System.out.println("grep process started...");
 		
-		PrintStream out = new PrintStream(outFile);
+		/*PrintStream out = new PrintStream(outFile);
 	     BufferedReader in = new BufferedReader(new InputStreamReader(inFile));
 
 		try {
@@ -67,7 +67,7 @@ public class GrepProcess implements MigratableProcess
 		}
 
 
-		suspending = false; 
+		suspending = false; */
 	}
 
 	public void suspend()
