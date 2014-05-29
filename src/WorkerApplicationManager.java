@@ -41,9 +41,20 @@ public void performOperation(){
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
-		    
+		  
+		 
 		
 	}
+	System.out.println(Worker.processMap);
+	System.out.println(Worker.processMap.get(Thread.currentThread().getId()).getProcessID());
+	System.out.println(Worker.processMap.get(Thread.currentThread().getId()).getProcessName());
+	System.out.println(Worker.processMap.get(Thread.currentThread().getId()).getThreadID());
+	System.out.println(Worker.processMap.get(Thread.currentThread().getId()).getState());
+	
+	newProcess.setState(State.TERMINATED);
+	Worker.processMap.put(threadID, newProcess);
+	System.out.println(Worker.processMap.get(Thread.currentThread().getId()).getState());
+	
 	
 }
 	@Override
