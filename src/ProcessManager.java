@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map.Entry;
@@ -136,11 +137,14 @@ class slaveProcessConnection implements Runnable {
 				//e.printStackTrace();	
 				System.out.println( "Connection " + id + " closed." );
 				ProcessManager.ProcessTable.remove(id);
+				ArrayList<Integer> keyToRemove = new ArrayList<Integer>();
 				for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
 					if(obj.getValue().getSlaveProcessID() == id){
-						UserConsole.userProcessMap.remove(obj.getKey());
+						keyToRemove.add(obj.getKey());
+						}
 					}
-					
+				for(int key: keyToRemove) {
+					UserConsole.userProcessMap.remove(key);
 				}
 				 try {
 					br.close();
