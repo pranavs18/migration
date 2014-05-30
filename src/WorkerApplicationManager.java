@@ -117,17 +117,15 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 				System.out.println("Id found in thread pool "+id+" actual Thread from pool "+ t.getId());
 		
 				        try {
-				            Field fTarget = Thread.class.getDeclaredField("target");
-				            fTarget.setAccessible(true);
-				            Runnable r = (Runnable) fTarget.get(t);
+				            Field field = Thread.class.getDeclaredField("target");
+				            field.setAccessible(true);
+				            Runnable r = (Runnable) field.get(t);
 
-				            // This handles the case that the service overrides the run() method
-				            // in the thread instead of setting the target runnable
 				            if (r == null) r = t;
 
-				            Field fI = r.getClass().getDeclaredField("suspending");
-				            fI.setAccessible(true);
-				            fI.setBoolean(r, true);
+				            Field removing = r.getClass().getDeclaredField("removing");
+				            removing.setAccessible(true);
+				            removing.setBoolean(r, true);
 				        } catch (Exception e) {
 				            e.printStackTrace();
 				        }

@@ -52,6 +52,11 @@ public class GrepProcess implements MigratableProcess
 				suspend();
 
 			}
+			if(removing){
+				
+				break;
+				
+			}
 			
 			System.out.println("grep");
 		//	String line = in.readLine();
@@ -92,8 +97,9 @@ public class GrepProcess implements MigratableProcess
 	
 
 	public void remove() {		
-		System.out.println("removeremoveremove");
-		removing = true;	
+		
+		System.out.println("removeremoveremove");	
+		
 	}
 
 	
