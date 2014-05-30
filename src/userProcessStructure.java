@@ -8,11 +8,12 @@ public class userProcessStructure  {
    private int slaveProcessPort;
   
    // constructor
-   public userProcessStructure(String ipAddress, String processName, int slaveProcessID){
+   public userProcessStructure(String ipAddress, String processName, int slaveProcessID, int slaveProcessPort){
 	   this.ipAddress = ipAddress;
 	   this.state = State.RUNNING;
 	   this.processName = processName;
 	   this.slaveProcessID = slaveProcessID;
+	   this.slaveProcessPort = slaveProcessPort;
    }
    
    public userProcessStructure() {

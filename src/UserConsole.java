@@ -60,7 +60,7 @@ public class UserConsole extends Thread implements Serializable{
 				
 					   String sendData = commandName + " " + pname + " " + processID;
 					   
-					   userProcessStructure ups = new userProcessStructure(ipAddress,pname,pid);
+					   userProcessStructure ups = new userProcessStructure(ipAddress,pname,pid,Integer.parseInt(port));
 			           userProcessMap.put(processID,ups);
 					   processID++;
 						// Extract the port number from the heart beat 	   
@@ -107,6 +107,7 @@ public class UserConsole extends Thread implements Serializable{
 					   if(obj.getKey() == pid){
 						   ipAddress = obj.getValue().getIpAddress();
 						   port = obj.getValue().getSlaveProcessPort();
+						   System.out.println(ipAddress +" and " + port);
 					   }
 				   }
 				   Socket MasterSocket = null;
