@@ -107,6 +107,7 @@ public class UserConsole extends Thread implements Serializable{
 					   if(obj.getKey() == pid){
 						   ipAddress = obj.getValue().getIpAddress();
 						   port = obj.getValue().getSlaveProcessPort();
+						   break;
 						   //System.out.println(ipAddress +" and " + port);
 					   }
 				   }
@@ -132,23 +133,48 @@ public class UserConsole extends Thread implements Serializable{
 					   System.out.println(" No user processes running right now \n");
 				   }
 				   else{
+				   String slaveIPAddress = null;
+				   int slavePort = 0 ;
 				   System.out.println("\n The list of user processes which are running are as follows \n");
 				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
 					   System.out.println(" |  Process ID ->" + obj.getKey() + " | Process Name ->" + obj.getValue().getProcessName() + " | Slave Machine IP -> " + obj.getValue().getIpAddress() + " |  State -> |" + obj.getValue().getState());
 				     }
-				   System.out.println("\n Enter the name of the process you want to migrate \n");
+				   System.out.println("\n Enter the ID of the process listed in the table you want to migrate \n");
+				   int pid = Integer.parseInt(br.readLine());
+				   System.out.println("\n Enter the coresponding name of the process you want to migrate \n");
 				   String processName = br.readLine();
-				   System.out.println(" \n Please choose the destination IP address and Port for the process from the list below to migrate the example process");
+				   System.out.println(" \n Please choose the destination IP address for the process from the list below to migrate the example process");
 				   if(ProcessManager.ProcessTable.entrySet().isEmpty()){
 					   System.out.println("\n Please launch a process on any machine to migrate the user process");
 				   }
 				   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
 					   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
 				   }
+				   String destIP = br.readLine();
+				   System.out.println(" \n Please choose the destination Port for the process from the list below to migrate the example process");
 				   String destPort = br.readLine();
-				   
-				   
+				   String commandName = "Migrate";
+				   String sendData= commandName + " " + processName + " " + pid + " " + destIP + " " + destPort ;
+				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
+					   if(obj.getKey() == pid){
+						   slaveIPAddress = obj.getValue().getIpAddress();
+						   slavePort = obj.getValue().getSlaveProcessPort();
+						   break;
+						   //System.out.println(ipAddress +" and " + port);
+					   }
 				   }
+				    Socket MasterSocket = null;
+					try {
+						MasterSocket = new Socket(slaveIPAddress, slavePort);
+					    PrintStream out = null;
+				        out = new PrintStream(MasterSocket.getOutputStream());
+					    out.println(sendData);
+					    MasterSocket.close();
+					 }catch (IOException e) {		
+							e.printStackTrace();
+						}
+					  
+				     }
 				   break;
 			   }
 			   
