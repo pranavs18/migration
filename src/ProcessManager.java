@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map.Entry;
 
 
@@ -19,7 +20,7 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
     private Socket connection;
     private int ID;
     
-    public static HashMap<Integer,HashMap<InetAddress,Integer>> ProcessTable = new HashMap<Integer,HashMap<InetAddress,Integer>>();
+    public static Hashtable<Integer,Hashtable<InetAddress,Integer>> ProcessTable = new Hashtable<Integer,Hashtable<InetAddress,Integer>>();
     
     public ProcessManager(String ipAddress, int port) {
 		this.Ipaddress= ipAddress;
@@ -93,7 +94,7 @@ class slaveProcessConnection implements Runnable {
       PrintStream ps = null;
       boolean done = false;
 	  
-      HashMap<InetAddress,Integer> SocketTable = new HashMap<InetAddress,Integer>();
+      Hashtable<InetAddress,Integer> SocketTable = new Hashtable<InetAddress,Integer>();
      
       public slaveProcessConnection(Socket client, int id, ProcessManager pm) {
 			this.SOCK = client;
@@ -132,7 +133,7 @@ class slaveProcessConnection implements Runnable {
 				}
 			} catch (Exception e) {
 				//System.exit(1);
-				e.printStackTrace();	
+				//e.printStackTrace();	
 				System.out.println( "Connection " + id + " closed." );
 				ProcessManager.ProcessTable.remove(id);
 				for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
@@ -146,7 +147,7 @@ class slaveProcessConnection implements Runnable {
 					ps.close();
 		            SOCK.close();
 				} catch (IOException e1) {
-					e1.printStackTrace();
+					//e1.printStackTrace();
 				}
 	             
 				break;
