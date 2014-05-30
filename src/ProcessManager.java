@@ -82,19 +82,7 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		// TODO Auto-generated method stub
 		
 	}
-    
-	@Override
-	public void launch(String pname, String Ipaddress, int portno) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-	public void launch(String pname) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+
 }
 
 class slaveProcessConnection implements Runnable {
@@ -128,7 +116,7 @@ class slaveProcessConnection implements Runnable {
 			try {
 				String message = br.readLine();
 				ps.println(" \n welcome client " +  id );
-				if(message == "close"){
+				if(message == null){
 					System.out.println( "Connection " + id + " closed." );
 					ProcessManager.ProcessTable.remove(id);
 					for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
@@ -142,8 +130,9 @@ class slaveProcessConnection implements Runnable {
 		             SOCK.close();
 		            break;
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				//System.exit(1);
+				e.printStackTrace();	
 				System.out.println( "Connection " + id + " closed." );
 				ProcessManager.ProcessTable.remove(id);
 				for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
