@@ -154,15 +154,20 @@ public class UserConsole extends Thread implements Serializable{
 				   System.out.println(" \n Please choose the destination Port for the process from the list below to migrate the example process");
 				   String destPort = br.readLine();
 				   String commandName = "Migrate";
-				   String sendData= commandName + " " + processName + " " + pid + " " + destIP + " " + destPort ;
+				  
 				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
 					   if(obj.getKey() == pid){
 						   slaveIPAddress = obj.getValue().getIpAddress();
 						   slavePort = obj.getValue().getSlaveProcessPort();
+						   if(destIP.equals(obj.getValue().getSlaveProcessID())){
+							   System.out.println("Migration Not possible within the same machine...Please choose a different IP");
+							   break;
+						   }
 						   break;
 						   //System.out.println(ipAddress +" and " + port);
 					   }
 				   }
+				   String sendData= commandName + " " + processName + " " + pid + " " + destIP + " " + destPort + " " + slaveIPAddress + " " + slavePort;
 				    Socket MasterSocket = null;
 					try {
 						MasterSocket = new Socket(slaveIPAddress, slavePort);
