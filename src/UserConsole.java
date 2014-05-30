@@ -107,7 +107,7 @@ public class UserConsole extends Thread implements Serializable{
 					   if(obj.getKey() == pid){
 						   ipAddress = obj.getValue().getIpAddress();
 						   port = obj.getValue().getSlaveProcessPort();
-						   System.out.println(ipAddress +" and " + port);
+						   //System.out.println(ipAddress +" and " + port);
 					   }
 				   }
 				   Socket MasterSocket = null;
