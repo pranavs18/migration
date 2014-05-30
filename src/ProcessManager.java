@@ -130,6 +130,13 @@ class slaveProcessConnection implements Runnable {
 				ps.println(" \n welcome client " +  id );
 				if(message == "close"){
 					System.out.println( "Connection " + id + " closed." );
+					ProcessManager.ProcessTable.remove(id);
+					for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
+						if(obj.getValue().getSlaveProcessID() == id){
+							UserConsole.userProcessMap.remove(obj.getKey());
+						}
+						
+					}
 		             br.close();
 		             ps.close();
 		             SOCK.close();
@@ -145,6 +152,14 @@ class slaveProcessConnection implements Runnable {
 					}
 					
 				}
+				 try {
+					br.close();
+					ps.close();
+		            SOCK.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+	             
 				break;
 			}
 		 

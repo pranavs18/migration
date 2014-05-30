@@ -15,7 +15,7 @@ public class UserConsole extends Thread implements Serializable{
 	// map to maintain user processes 
     public static HashMap<Integer,userProcessStructure> userProcessMap = new HashMap<Integer,userProcessStructure>();
 	
-	public static void main(String args[]){
+	public static void main(String args[]) throws IOException{
 		ProcessManager pm = new ProcessManager(args[0],Integer.parseInt(args[1]));
 		 System.out.println("Process Manager started : Status Running : IpAddress:" + args[0] + "Port: " + args[1] );
 		 new Thread(pm).start(); 
@@ -37,7 +37,7 @@ public class UserConsole extends Thread implements Serializable{
 			   switch(n){
 			   case 1:{
 				  
-				  System.out.println("Please enter the name of the process you want to launch\n");
+				  System.out.println("LAUNCH A NEW PROCESS - Please enter the name of the process you want to launch\n");
 				  try {
 				    pname = br.readLine();    
 					System.out.println("Choose Ipaddress:port no of the machine on which you want to launch the process");
@@ -78,7 +78,7 @@ public class UserConsole extends Thread implements Serializable{
 			    }
 			   
 			   case 2:{
-				   System.out.println("To remove(kill) a process, Please choose the name and ID of the process from the list mentioned below \n");
+				   System.out.println("REMOVE A PROCESS - To remove(kill) a process, Please choose the name and ID of the process from the list mentioned below \n");
 				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
 					   System.out.println(" |  Process ID ->" + obj.getKey() + " | Process Name ->" + obj.getValue().getProcessName() + " | Slave Machine IP -> " + obj.getValue().getIpAddress() + " |  State -> |" + obj.getValue().getState());
 				   }
@@ -127,7 +127,7 @@ public class UserConsole extends Thread implements Serializable{
 			   }
 			   
 			   case 3:{
-				   System.out.println("Please enter the name of the process you want to migrate");
+				   System.out.println("MIGRATE A PROCESS");
 				   if(userProcessMap.entrySet().isEmpty()){
 					   System.out.println(" No user processes running right now \n");
 				   }
@@ -136,7 +136,8 @@ public class UserConsole extends Thread implements Serializable{
 				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
 					   System.out.println(" |  Process ID ->" + obj.getKey() + " | Process Name ->" + obj.getValue().getProcessName() + " | Slave Machine IP -> " + obj.getValue().getIpAddress() + " |  State -> |" + obj.getValue().getState());
 				     }
-				     
+				   System.out.println("\n Enter the name of the process you want to migrate \n");
+				   String processName = br.readLine();
 				   System.out.println(" \n Please choose the destination IP address and Port for the process from the list below to migrate the example process");
 				   if(ProcessManager.ProcessTable.entrySet().isEmpty()){
 					   System.out.println("\n Please launch a process on any machine to migrate the user process");
@@ -144,6 +145,9 @@ public class UserConsole extends Thread implements Serializable{
 				   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
 					   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
 				   }
+				   String destPort = br.readLine();
+				   
+				   
 				   }
 				   break;
 			   }
