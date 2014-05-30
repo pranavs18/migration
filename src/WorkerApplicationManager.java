@@ -1,6 +1,11 @@
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.*;
 import java.net.Socket;
@@ -29,6 +34,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
     Long threadID;
 	String processName = message[1];
 	Integer processID = Integer.parseInt(message[2]);
+	
 	
 
 	if(message[0].equals("Launch")){
@@ -94,10 +100,6 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 	else if(message[0].equals("Remove")){
 		
 		Long id = Worker.threadIds.get(processID);
-
-		/* Remove */
-		System.out.println("This is the remove string "+message[0]+" "+message[1]+" "+message[2]);
-		
 		PrintStream out = null;
 		
 		
@@ -166,6 +168,204 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 		out.println("Terminated "+processID+" "+processName);
 		
 	}
+	
+	else if(message[0].equals("Migrate")){
+		
+		String destIp = message[3];
+		int destPort = Integer.parseInt(message[4]);
+		String selfIp = message[5];
+		int selfPort = Integer.parseInt(message[6]);
+		
+		
+		
+		Long id = Worker.threadIds.get(processID);
+		
+		Socket slaveMigrationConnection = null;
+		try {
+			slaveMigrationConnection = new Socket(destIp,destPort);
+		} catch (IOException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+
+		
+		PrintStream out = null;
+		
+		
+		/* IO operation objects */
+		try {
+			out = new PrintStream(slaveMigrationConnection.getOutputStream());
+		} catch (IOException e2) {
+
+			e2.printStackTrace();
+		}
+
+		for(Thread t : Thread.getAllStackTraces().keySet()){
+			if(t.getId()==id){
+			
+				
+				System.out.println("Id found in thread pool "+id+" actual Thread from pool "+ t.getId());
+				Runnable r = null;
+				        try {
+				            Field field = Thread.class.getDeclaredField("target");
+				            field.setAccessible(true);
+				            r = (Runnable) field.get(t);
+
+				            if (r == null) r = t;
+
+				            Field removing = r.getClass().getDeclaredField("suspending");
+				            removing.setAccessible(true);
+				            removing.setBoolean(r, true);
+				        } catch (Exception e) {
+				            e.printStackTrace();
+				        }
+				  
+				        
+				  FileOutputStream file = null;
+				  ObjectOutputStream  oos = null;
+				try {
+					file = new FileOutputStream(message[0]+message[1]+message[2]+".txt");
+				} catch (FileNotFoundException e1) {
+					
+					e1.printStackTrace();
+				}      
+				  try {
+					oos = new ObjectOutputStream(file);	
+					oos.writeObject(r);
+					
+					
+					
+					
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+				  
+
+				try {
+					oos.close();
+					file.close();
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+				
+				out.println("SlaveMigrateRequest "+processName+" "+processID+" "+selfIp+" "+selfPort+" "+message[0]+message[1]+message[2]+".txt");
+				
+//				InputStreamReader input = null;
+//				BufferedReader in = null;
+//				try {
+//					input = new InputStreamReader(slaveMigrationConnection.getInputStream());
+//					 in = new BufferedReader(input);
+//				} catch (IOException e) {
+//					 
+//					e.printStackTrace();
+//				}
+//				String response = null;
+//				try {
+//					response = in.readLine();
+//				} catch (IOException e) {
+//			
+//					e.printStackTrace();
+//				}
+				
+				try {
+					slaveMigrationConnection.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+			}
+				
+				
+//				if(response.equals("MigrationComplete")){
+//					
+//					try {
+//						slaveMigrationConnection.close();
+//					} catch (IOException e) {
+//						e.printStackTrace();
+//					}
+//				}
+				
+				
+				
+				
+			}
+		}
+		
+		
+	}
+	
+	else if(message[0].equals("SlaveMigrateRequest")){
+		
+		String destIp = message[3];
+		int destPort = Integer.parseInt(message[4]);
+		String fileName = message[5];
+		
+		FileInputStream fileInput = null;
+		ObjectInputStream in = null;
+		try {
+			fileInput = new FileInputStream(fileName);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+        try {
+			 in = new ObjectInputStream(fileInput);
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+		
+		Runnable r = null;
+		try {
+			r = (MigratableProcess)in.readObject();
+			System.out.println(r.toString());
+		
+			in.close();
+			fileInput.close();
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Thread t = new Thread(r);
+		t.start();
+		  try {
+	            Field field = Thread.class.getDeclaredField("target");
+	            field.setAccessible(true);
+	            r = (Runnable) field.get(t);
+
+	            if (r == null) r = t;
+
+	            Field removing = r.getClass().getDeclaredField("suspending");
+	            removing.setAccessible(true);
+	            removing.setBoolean(r, false);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+		
+		  
+//		  Socket slaveMigrationConnection = null;
+//		  PrintStream out = null;
+//		  
+//		  try {
+//				slaveMigrationConnection = new Socket(destIp,destPort);
+//			} catch (IOException e3) {
+//				e3.printStackTrace();
+//			}
+//		 
+//			
+//			
+//			/* IO operation objects */
+//			try {
+//				out = new PrintStream(slaveMigrationConnection.getOutputStream());
+//			} catch (IOException e2) {
+//
+//				e2.printStackTrace();
+//			}
+//			
+//			out.println("MigrationComplete");
+			
+
+		
+	}
 
 	
 }
@@ -177,7 +377,6 @@ public void run() {
 			performOperation();
 		} catch (InstantiationException | IllegalAccessException
 				| ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println();

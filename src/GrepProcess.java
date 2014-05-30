@@ -20,6 +20,7 @@ public class GrepProcess implements MigratableProcess
 	private volatile boolean suspending;
 	private volatile boolean removing;
 	private boolean done = true;
+	private int count =1;
 	public GrepProcess(){
 		
 	}
@@ -46,6 +47,13 @@ public class GrepProcess implements MigratableProcess
 	    // BufferedReader in = new BufferedReader(new InputStreamReader(inFile));
 
 		while (done) {
+			System.out.println(count++);
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				
+				e.printStackTrace();
+			}
 			System.out.println("Suspendin "+ suspending);
 			while(suspending){
 				
