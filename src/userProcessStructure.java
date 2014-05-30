@@ -4,12 +4,15 @@ public class userProcessStructure  {
    private String ipAddress;
    private State state;
    private String processName;
+   private int slaveProcessID;
+   private int slaveProcessPort;
   
    // constructor
-   public userProcessStructure(String ipAddress, String processName){
+   public userProcessStructure(String ipAddress, String processName, int slaveProcessID){
 	   this.ipAddress = ipAddress;
 	   this.state = State.RUNNING;
 	   this.processName = processName;
+	   this.slaveProcessID = slaveProcessID;
    }
    
    public userProcessStructure() {
@@ -37,5 +40,22 @@ public String getIpAddress() {
    public void setProcessName(String processName) {
 	this.processName = processName;
    }
+
+   public int getSlaveProcessID() {
+	return slaveProcessID;
+}
+
+   public void setSlaveProcessID(int slaveProcessID) {
+	this.slaveProcessID = slaveProcessID;
+}
+
+   public int getSlaveProcessPort() {
+	return slaveProcessPort;
+}
+
+   public void setSlaveProcessPort(int slaveProcessPort) {
+	this.slaveProcessPort = slaveProcessPort;
+}
+
 
 }

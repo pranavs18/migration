@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -48,15 +49,18 @@ public class UserConsole extends Thread implements Serializable{
 						   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
 					   }
 					   
+					   System.out.println("Enter the slave process ID from the list on which you want to launch the user process");
+					   int pid = Integer.parseInt(br.readLine());
 					   System.out.println("Enter the IP address from the list \n");
 					   String ipAddress = br.readLine();
 					   System.out.println("Enter the corresponding port of the IP address you chose above \n");
 					   String port = br.readLine();
 					   String commandName = "Launch";
 					   
-					   
+				
 					   String sendData = commandName + " " + pname + " " + processID;
-					   userProcessStructure ups = new userProcessStructure(ipAddress,pname);
+					   
+					   userProcessStructure ups = new userProcessStructure(ipAddress,pname,pid);
 			           userProcessMap.put(processID,ups);
 					   processID++;
 						// Extract the port number from the heart beat 	   
@@ -74,27 +78,86 @@ public class UserConsole extends Thread implements Serializable{
 			    }
 			   
 			   case 2:{
-				   System.out.println("Please enter the name of the process you want to remove");
-				   
+				   System.out.println("To remove(kill) a process, Please choose the name and ID of the process from the list mentioned below \n");
+				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
+					   System.out.println(" |  Process ID ->" + obj.getKey() + " | Process Name ->" + obj.getValue().getProcessName() + " | Slave Machine IP -> " + obj.getValue().getIpAddress() + " |  State -> |" + obj.getValue().getState());
+				   }
+				   System.out.println(" \n Enter the process ID from the map \n");
+				   int pid = 0;
+				try {
+					pid = Integer.parseInt(br.readLine());
+				} catch (NumberFormatException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				   String name = null;
+				   try {  
+					System.out.println("\n Enter the name of the process");   
+				    name = br.readLine();
+				} catch (IOException e) {
+					
+					e.printStackTrace();
+				}
+				   String commandName = "Remove";
+				   String ipAddress = null;
+				   int port = 0 ;
+				   String sendData = commandName + " " + name + " " + pid;
+				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
+					   if(obj.getKey() == pid){
+						   ipAddress = obj.getValue().getIpAddress();
+						   port = obj.getValue().getSlaveProcessPort();
+					   }
+				   }
+				   Socket MasterSocket = null;
+				try {
+					MasterSocket = new Socket(ipAddress, port);
+				   PrintStream out = null;
+			
+					out = new PrintStream(MasterSocket.getOutputStream());
+				   out.println(sendData);
+				   MasterSocket.close();
+				 }catch (IOException e) {
+						
+						e.printStackTrace();
+					}
+				
 				   break;
 			   }
 			   
 			   case 3:{
 				   System.out.println("Please enter the name of the process you want to migrate");
+				   if(userProcessMap.entrySet().isEmpty()){
+					   System.out.println(" No user processes running right now \n");
+				   }
+				   else{
+				   System.out.println("\n The list of user processes which are running are as follows \n");
+				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
+					   System.out.println(" |  Process ID ->" + obj.getKey() + " | Process Name ->" + obj.getValue().getProcessName() + " | Slave Machine IP -> " + obj.getValue().getIpAddress() + " |  State -> |" + obj.getValue().getState());
+				     }
+				     
 				   System.out.println(" \n Please choose the destination IP address and Port for the process from the list below to migrate the example process");
 				   if(ProcessManager.ProcessTable.entrySet().isEmpty()){
-					   System.out.println("\n Please launch a process on any machine to migrate the example process");
+					   System.out.println("\n Please launch a process on any machine to migrate the user process");
 				   }
 				   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
 					   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
+				   }
 				   }
 				   break;
 			   }
 			   
 			   case 4:{
+				   if(userProcessMap.entrySet().isEmpty()){
+					   System.out.println(" No user processes running right now \n");
+					   break;
+				   }
+				   else{
 				   System.out.println("\n The list of user processes which are running are as follows \n");
 				   for(Entry<Integer,userProcessStructure> obj: userProcessMap.entrySet()){
 					   System.out.println(" |  Process ID ->" + obj.getKey() + " | Process Name ->" + obj.getValue().getProcessName() + " | Slave Machine IP -> " + obj.getValue().getIpAddress() + " |  State -> |" + obj.getValue().getState());
+				   }
+				   break;
 				   }
 			   }
 			   

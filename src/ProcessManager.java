@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 
 public class ProcessManager implements MigratableProcess, Runnable,Serializable {
@@ -138,6 +139,12 @@ class slaveProcessConnection implements Runnable {
 				//System.exit(1);
 				System.out.println( "Connection " + id + " closed." );
 				ProcessManager.ProcessTable.remove(id);
+				for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
+					if(obj.getValue().getSlaveProcessID() == id){
+						UserConsole.userProcessMap.remove(obj.getKey());
+					}
+					
+				}
 				break;
 			}
 		 
