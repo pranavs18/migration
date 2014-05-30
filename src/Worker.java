@@ -51,7 +51,7 @@ public class Worker extends Thread implements Runnable{
 			/* Start a new thread to perform operations as required by the 
 			 * message sent by master
 			 */	  
-			WorkerApplicationManager wam = new WorkerApplicationManager(arguments,MasterIp,MasterPort);
+			WorkerApplicationManager wam = new WorkerApplicationManager(arguments,MasterIp,MasterPort, masterClientSocket);
 			new Thread(wam).start();
 
 		 }

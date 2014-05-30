@@ -7,11 +7,8 @@ import java.io.Serializable;
 	static final long serialVersionUID = 1L;
 
     public void suspend();
-  
-    public void launch(String pname);
     
     public void remove();
 
-	void launch(String pname, String Ipaddress, int portno);
     
 }
