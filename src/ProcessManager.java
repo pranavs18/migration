@@ -117,6 +117,18 @@ class slaveProcessConnection implements Runnable {
 		while(!done){
 			try {
 				String message = br.readLine();
+				if(message != null){
+				String words[] = message.split(" ");
+				if(words[0].equals("Migrated")){
+					int pid = Integer.parseInt(words[2]);
+					for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
+						if(obj.getKey() == pid){
+						   obj.getValue().setIpAddress(words[3]);
+						   obj.getValue().setSlaveProcessPort(Integer.parseInt(words[4]));
+						}
+					}
+				 }		
+				}
 				ps.println(" \n welcome client " +  id );
 				if(message == null){
 					System.out.println( "Connection " + id + " closed." );
