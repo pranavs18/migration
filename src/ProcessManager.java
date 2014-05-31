@@ -7,8 +7,10 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Map.Entry;
 
 
@@ -21,7 +23,7 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
     private Socket connection;
     private int ID;
     
-    public static Hashtable<Integer,Hashtable<InetAddress,Integer>> ProcessTable = new Hashtable<Integer,Hashtable<InetAddress,Integer>>();
+    public static Map<Integer, HashMap<InetAddress, Integer>> ProcessTable = Collections.synchronizedMap(new HashMap<Integer,HashMap<InetAddress,Integer>>());
     
     public ProcessManager(String ipAddress, int port) {
 		this.Ipaddress= ipAddress;
@@ -95,7 +97,7 @@ class slaveProcessConnection implements Runnable {
       PrintStream ps = null;
       boolean done = false;
 	  
-      Hashtable<InetAddress,Integer> SocketTable = new Hashtable<InetAddress,Integer>();
+      HashMap<InetAddress,Integer> SocketTable = new HashMap<InetAddress,Integer>();
      
       public slaveProcessConnection(Socket client, int id, ProcessManager pm) {
 			this.SOCK = client;
@@ -116,7 +118,11 @@ class slaveProcessConnection implements Runnable {
 	public void run(){
 		while(!done){
 			try {
+				
+				
 				String message = br.readLine();
+				
+				//System.out.println("Message"+message);
 				if(message != null){
 				String words[] = message.split(" ");
 				if(words[0].equals("Migrated")){
@@ -127,8 +133,17 @@ class slaveProcessConnection implements Runnable {
 						   obj.getValue().setSlaveProcessPort(Integer.parseInt(words[4]));
 						}
 					}
-				 }		
+				 }
+				
+				else if(words[0].equals("Terminated")){
+					
+					int pid = Integer.parseInt(words[2]);
+					System.out.println("Terminated " +pid );
+					UserConsole.userProcessMap.remove(pid);
+					
 				}
+				}
+				
 				ps.println(" \n welcome client " +  id );
 				if(message == null){
 					System.out.println( "Connection " + id + " closed." );

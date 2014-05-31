@@ -82,7 +82,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 					System.out.println("Thread number "+threadID+" interuupted");
 				}
 				
-				out.println("Terminated "+processID+" "+processName);
+				
 				
 				/* After completion The entry in the threadIds Hashmap is removed*/
 				
@@ -99,6 +99,13 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 	
 	else if(message[0].equals("Remove")){
 		
+		Socket tempSocket = null;
+		try {
+			tempSocket = new Socket(MasterIp,MasterPort);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		Long id = Worker.threadIds.get(processID);
 		PrintStream out = null;
 		
@@ -106,12 +113,12 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 
 		/* IO operation objects */
 		try {
-			out = new PrintStream(socket.getOutputStream());
+			out = new PrintStream(tempSocket.getOutputStream());
 		} catch (IOException e2) {
 
 			e2.printStackTrace();
 		}
-		System.out.println("Worker.tread " + Worker.threadIds);
+		
 		for(Thread t : Thread.getAllStackTraces().keySet()){
 			if(t.getId()==id){
 			
@@ -136,38 +143,17 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 				 	
 				
 				
-			/*
-			Class<?> noparams[]={};	
-			Method x = null;
-			Object obj = null;
-			
-			try{
-			Class<?> cls = Class.forName(processName);
-			obj = cls.newInstance();
-			
-				 x = cls.getDeclaredMethod("suspend", noparams);
-				 System.out.println(x.toString() + " " + x.getName() + " " +x.isAccessible());
-				//x = t.getClass().getDeclaredMethod("suspend", (Class<?>[]) null);
-			} catch (NoSuchMethodException | SecurityException e) {
-
-				e.printStackTrace();
 			}
-			try {
-				if(x != null)
-				{
-					x.invoke(obj, (Object[])null);
-				}
-			} catch (IllegalAccessException | IllegalArgumentException
-					| InvocationTargetException e) {
-				
-				e.printStackTrace();
-			}
-			
-
-			*/}
 		}
-
-		
+		out.println("Terminated "+processName+" "+processID);
+		Worker.threadIds.remove(processID);
+		System.out.println("Worker.tread " + Worker.threadIds);
+		try {
+			tempSocket.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	
@@ -256,7 +242,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 					e.printStackTrace();
 				}
 				
-				//Worker.threadIds.remove(processID);
+				Worker.threadIds.remove(processID);
 				out.println("SlaveMigrateRequest "+processName+" "+processID+" "+selfIp+" "+selfPort+" "+destIp+" "+destPort+" "+message[0]+message[1]+message[2]+".txt");
 				
 				

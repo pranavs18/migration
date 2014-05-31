@@ -2,8 +2,10 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Map.Entry;
 
 public class UserConsole extends Thread implements Serializable{
@@ -14,7 +16,7 @@ public class UserConsole extends Thread implements Serializable{
 	public static int processID = 1;
 	
 	// map to maintain user processes 
-    public static Hashtable<Integer,userProcessStructure> userProcessMap = new Hashtable<Integer,userProcessStructure>();
+    public static Map<Integer,userProcessStructure> userProcessMap = Collections.synchronizedMap(new HashMap<Integer,userProcessStructure>());
 	
 	public static void main(String args[]) throws IOException{
 		ProcessManager pm = new ProcessManager(args[0],Integer.parseInt(args[1]));
@@ -46,7 +48,7 @@ public class UserConsole extends Thread implements Serializable{
 						   System.out.println("\n Please launch a worker process on any machine to launch the example process on it \n");
 					   }
 					 else{
-					   for (Entry<Integer, Hashtable<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
+					   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
 						   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
 					   }
 					   
@@ -148,7 +150,7 @@ public class UserConsole extends Thread implements Serializable{
 				   if(ProcessManager.ProcessTable.entrySet().isEmpty()){
 					   System.out.println("\n Please launch a process on any machine to migrate the user process");
 				   }
-				   for (Entry<Integer, Hashtable<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
+				   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
 					   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
 				   }
 				   String destIP = br.readLine();
