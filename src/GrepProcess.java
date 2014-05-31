@@ -46,7 +46,7 @@ public class GrepProcess implements MigratableProcess
 		// PrintStream out = new PrintStream(outFile);
 	    // BufferedReader in = new BufferedReader(new InputStreamReader(inFile));
 
-		while (done) {
+		while (!suspending) {
 			System.out.println(count++);
 			try {
 				Thread.sleep(2000);
@@ -54,17 +54,21 @@ public class GrepProcess implements MigratableProcess
 				
 				e.printStackTrace();
 			}
-			System.out.println("Suspendin "+ suspending);
-			while(suspending){
-				
-				suspend();
-
-			}
-			if(removing){
-				
-				break;
-				
-			}
+			
+			
+//			System.out.println("Suspendin "+ suspending);
+//			while(suspending){
+//				
+//				suspend();
+//
+//			}
+//			if(removing){
+//				
+//				break;
+//				
+//			}
+			
+			
 			
 			System.out.println("grep");
 		//	String line = in.readLine();

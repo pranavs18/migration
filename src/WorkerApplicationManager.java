@@ -85,7 +85,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 				out.println("Terminated "+processID+" "+processName);
 				
 				/* After completion The entry in the threadIds Hashmap is removed*/
-				Worker.threadIds.remove(processID);
+				
 				System.out.println("map entries exit: "+Worker.threadIds);
 				
 			} catch (ClassNotFoundException e) {
@@ -111,7 +111,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 
 			e2.printStackTrace();
 		}
-
+		System.out.println("Worker.tread " + Worker.threadIds);
 		for(Thread t : Thread.getAllStackTraces().keySet()){
 			if(t.getId()==id){
 			
@@ -125,9 +125,11 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 
 				            if (r == null) r = t;
 
-				            Field removing = r.getClass().getDeclaredField("removing");
-				            removing.setAccessible(true);
-				            removing.setBoolean(r, true);
+				            Class<?> noParmeter[] = {};
+				            Method suspending = r.getClass().getDeclaredMethod("suspend", noParmeter );
+				            suspending.setAccessible(true);
+				            suspending.invoke(r, (Object[])null);
+				            r=null;
 				        } catch (Exception e) {
 				            e.printStackTrace();
 				        }
@@ -165,7 +167,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 			*/}
 		}
 
-		out.println("Terminated "+processID+" "+processName);
+		
 		
 	}
 	
@@ -199,8 +201,11 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 
 			e2.printStackTrace();
 		}
+		
+		System.out.println("Worker.tread " + Worker.threadIds);
 
 		for(Thread t : Thread.getAllStackTraces().keySet()){
+			System.out.println("Process ID"+ processID+"Id found in thread pool "+id+" actual Thread from pool "+ t.getId());
 			if(t.getId()==id){
 			
 				
@@ -212,10 +217,11 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 				            r = (Runnable) field.get(t);
 
 				            if (r == null) r = t;
-
-				            Field removing = r.getClass().getDeclaredField("suspending");
-				            removing.setAccessible(true);
-				            removing.setBoolean(r, true);
+				            
+				            Class<?> noParmeter[] = {};
+				            Method suspending = r.getClass().getDeclaredMethod("suspend", noParmeter );
+				            suspending.setAccessible(true);
+				            suspending.invoke(r, (Object[])null);
 				        } catch (Exception e) {
 				            e.printStackTrace();
 				        }
@@ -250,7 +256,9 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 					e.printStackTrace();
 				}
 				
-				out.println("SlaveMigrateRequest "+processName+" "+processID+" "+selfIp+" "+selfPort+" "+message[0]+message[1]+message[2]+".txt");
+				//Worker.threadIds.remove(processID);
+				out.println("SlaveMigrateRequest "+processName+" "+processID+" "+selfIp+" "+selfPort+" "+destIp+" "+destPort+" "+message[0]+message[1]+message[2]+".txt");
+				
 				
 //				InputStreamReader input = null;
 //				BufferedReader in = null;
@@ -289,16 +297,16 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 				
 				
 			}
-		}
-		
-		
+		}	
 	}
 	
 	else if(message[0].equals("SlaveMigrateRequest")){
 		
 		String destIp = message[3];
 		int destPort = Integer.parseInt(message[4]);
-		String fileName = message[5];
+		String selfIp = message[5];
+		int selfPort = Integer.parseInt(message[6]);
+		String fileName = message[7];
 		
 		FileInputStream fileInput = null;
 		ObjectInputStream in = null;
@@ -327,6 +335,11 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 		}
 		Thread t = new Thread(r);
 		t.start();
+		Long threadid = t.getId();
+		
+		Worker.threadIds.put(processID, threadid);
+		System.out.println("Put Put " + Worker.threadIds);
+		
 		  try {
 	            Field field = Thread.class.getDeclaredField("target");
 	            field.setAccessible(true);
@@ -340,29 +353,37 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
-		
 		  
-//		  Socket slaveMigrationConnection = null;
-//		  PrintStream out = null;
-//		  
-//		  try {
-//				slaveMigrationConnection = new Socket(destIp,destPort);
-//			} catch (IOException e3) {
-//				e3.printStackTrace();
-//			}
-//		 
-//			
-//			
-//			/* IO operation objects */
-//			try {
-//				out = new PrintStream(slaveMigrationConnection.getOutputStream());
-//			} catch (IOException e2) {
-//
-//				e2.printStackTrace();
-//			}
-//			
-//			out.println("MigrationComplete");
+		  
+		  
+		  
+		  Socket migrateReplytSocket = null;
+		try {
+			migrateReplytSocket = new Socket(MasterIp, MasterPort);
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+			/* Keeps sending heartbeat with process map and its own server port number */
 			
+			PrintStream out = null;
+			try {
+				out = new PrintStream(migrateReplytSocket.getOutputStream());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+			out.println("Migrated "+processName+" "+processID+" "+selfIp+" "+selfPort);
+			out.flush();
+		 
+			try {
+				migrateReplytSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
 		
 	}

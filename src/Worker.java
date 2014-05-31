@@ -37,7 +37,7 @@ public class Worker extends Thread implements Runnable{
 		ServerSocket workerServer = new ServerSocket(workerServerPort);
 
 		while(true){
-			
+		
 		Socket masterClientSocket = workerServer.accept();	
 		InputStreamReader input = new InputStreamReader(masterClientSocket.getInputStream());
 		BufferedReader in = new BufferedReader(input);
