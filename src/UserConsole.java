@@ -42,7 +42,17 @@ public class UserConsole extends Thread implements Serializable{
 				  
 				  System.out.println("LAUNCH A NEW PROCESS - Please enter the name of the process you want to launch\n");
 				  try {
-				    pname = br.readLine();    
+				    pname = br.readLine(); 
+				    String tmp[] = pname.split(" ");
+				    String temp = "";
+				    if(tmp.length > 1){
+				    for(int i=1;i<tmp.length;i++){
+				    	System.out.println(tmp[i]);
+				    	temp = temp + tmp[i] + " ";
+				    }
+				    }
+				    System.out.println(temp);
+				    pname = tmp[0];
 					System.out.println("Choose Ipaddress:port no of the machine on which you want to launch the process");
 					 if(ProcessManager.ProcessTable.entrySet().isEmpty()){
 						   System.out.println("\n Please launch a worker process on any machine to launch the example process on it \n");
@@ -61,7 +71,7 @@ public class UserConsole extends Thread implements Serializable{
 					   String commandName = "Launch";
 					   
 				
-					   String sendData = commandName + " " + pname + " " + processID;
+					   String sendData = commandName + " " + tmp[0] + " " + processID + " " + temp;
 					   
 					   userProcessStructure ups = new userProcessStructure(ipAddress,pname,pid,Integer.parseInt(port));
 			           userProcessMap.put(processID,ups);

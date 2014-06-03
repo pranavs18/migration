@@ -29,18 +29,27 @@ public WorkerApplicationManager(String[] message,String MasterIp, int MasterPort
 	
 }
 	
-public void performOperation() throws InstantiationException, IllegalAccessException, ClassNotFoundException{
+public void performOperation() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException{
 
     Long threadID;
 	String processName = message[1];
 	Integer processID = Integer.parseInt(message[2]);
-	
+  // System.out.println("PROCESS" + processID);
 	
 
 	if(message[0].equals("Launch")){
 		
 		
+		System.out.println("messages "+ message[0]+" "+message[1]+ " " + message[2] + " " +  message[3]);
 		PrintStream out = null;
+		String []tmp = new String[message.length-3];
+		System.out.println(message.length);
+		if(message.length > 3){
+		for(int i=0;i<message.length -3;i++){
+		  	tmp[i] = message[i+3];
+		  	//System.out.println(tmp[i] + " " + tmp);
+		 } 
+		}
 		
 		
 		/* IO operation objects */
@@ -53,12 +62,16 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 		
 			
 		 try {
-		    	MigratableProcess command = null;		
-		    	
+		   
+		        MigratableProcess process = null;
+		        Object[] x = {tmp};
 				try {
 					// java reflection to launch the process whose class name is detected at run time
-
-					command = (MigratableProcess)Class.forName(processName).newInstance();
+					Class<?> className = Class.forName(processName);
+					Constructor<?> constructor = className.getConstructor(String [].class);
+					process = (MigratableProcess) constructor.newInstance(x);
+			         
+					//command = (MigratableProcess)Class.forName(processName).newInstance();
 					
 				} catch (InstantiationException e) {
 					e.printStackTrace();
@@ -66,7 +79,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 					e.printStackTrace();
 				}
                 
-				Thread pThread = new Thread(command);
+				Thread pThread = new Thread(process);
 				threadID = pThread.getId();
 				System.out.println("Thread Id should be same as grep"+ threadID);
 				Worker.threadIds.put(processID, threadID);
@@ -85,7 +98,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 				
 				
 				/* After completion The entry in the threadIds Hashmap is removed*/
-				
+				out.println("Terminated "+processName+" "+processID);		
 				System.out.println("map entries exit: "+Worker.threadIds);
 				
 			} catch (ClassNotFoundException e) {
@@ -383,7 +396,7 @@ public void run() {
 		try {
 			performOperation();
 		} catch (InstantiationException | IllegalAccessException
-				| ClassNotFoundException e) {
+				| ClassNotFoundException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			e.printStackTrace();
 		}
 		System.out.println();

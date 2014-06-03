@@ -20,21 +20,21 @@ public class GrepProcess implements MigratableProcess
 	private volatile boolean suspending;
 	private volatile boolean removing;
 	private boolean done = true;
-	private int count =1;
+	
 	public GrepProcess(){
 		
 	}
 
 	public GrepProcess(String args[]) throws Exception
 	{
-	/*	if (args.length != 3) {
+		if (args.length != 3) {
 			System.out.println("usage: GrepProcess <queryString> <inputFile> <outputFile>");
 			throw new Exception("Invalid Arguments");
 		}
 		
 		query = args[0];
 		inFile = new TransactionalFileInputStream(args[1]);
-		outFile = new TransactionalFileOutputStream(args[2], false);*/
+		outFile = new TransactionalFileOutputStream(args[2], false);
 	}
 
 	@Override
@@ -42,38 +42,27 @@ public class GrepProcess implements MigratableProcess
 	
 	{
 		
-		System.out.println("grep process started... with Id "+Thread.currentThread().getId());
-		// PrintStream out = new PrintStream(outFile);
-	    // BufferedReader in = new BufferedReader(new InputStreamReader(inFile));
+		//System.out.println("grep process started... with Id "+Thread.currentThread().getId());
+	     PrintStream out = new PrintStream(outFile);
+	     BufferedReader in = new BufferedReader(new InputStreamReader(inFile));
 
 		while (!suspending) {
-			System.out.println(count++);
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
 				
 				e.printStackTrace();
+			}	
+			
+			//System.out.println("grep");
+			String line = null;
+			try {
+				line = in.readLine();
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
-			
-			
-//			System.out.println("Suspendin "+ suspending);
-//			while(suspending){
-//				
-//				suspend();
-//
-//			}
-//			if(removing){
-//				
-//				break;
-//				
-//			}
-			
-			
-			
-			System.out.println("grep");
-		//	String line = in.readLine();
 
-/*			if (line == null) break;
+			if (line == null) break;
 			
 			if (line.contains(query)) {
 				out.println(line);
@@ -84,7 +73,7 @@ public class GrepProcess implements MigratableProcess
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// ignore it
-			}*/
+			}
 		}
 		
 
@@ -95,11 +84,10 @@ public class GrepProcess implements MigratableProcess
 	@Override
 	public void suspend()
 	{
-		System.out.println("suspendsuspendsuspend");
+		//System.out.println("suspendsuspendsuspend");
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		suspending = true;
@@ -110,10 +98,11 @@ public class GrepProcess implements MigratableProcess
 
 	public void remove() {		
 		
-		System.out.println("removeremoveremove");	
+		System.out.println("remove executed");	
 		
 	}
 
+	
 	
 
 }

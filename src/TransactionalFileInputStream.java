@@ -1,8 +1,10 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.io.Serializable;
 
 
@@ -15,15 +17,14 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	
     private int currentFileOffset;
     private FileInputStream in = null;
-    private File file;
-	public TransactionalFileInputStream(String string) {
-		
+    private String filename;
+    
+	public TransactionalFileInputStream(String filename) throws FileNotFoundException {
+		this.filename = filename;
+		in = new FileInputStream(filename);
+		this.currentFileOffset = 0;
 	}
-
-	public TransactionalFileInputStream(File file) {
-        this.file = file;
-        this.currentFileOffset = 0;
-    }
+	
 	
 	@Override
     public void close() {
@@ -35,7 +36,26 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 		}
     }
 	
-	
+	/* public String readLine(){
+		 RandomAccessFile raf = null;
+		 String s = null;
+			try {
+				raf = new RandomAccessFile(this.filename, "r");
+			    raf.seek(this.currentFileOffset +1);
+			    
+			    s = raf.readLine();
+			    if(s != null){
+			    	this.currentFileOffset += s.length();
+			    }
+			    
+			    raf.close();
+			} catch (IOException e) {
+		         e.printStackTrace();
+	         }
+		 
+		 return s;	
+	 }
+	*/
 	 @Override
 	    public int read(byte[] bytes, int fileOffset, int total) {
 	        try {
@@ -113,7 +133,7 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	public FileInputStream BytesInputStream() {
         FileInputStream fis = null;
 		try {
-			fis = new FileInputStream(file);
+			fis = new FileInputStream(filename);
 		    try {
 				fis.skip(currentFileOffset);
 			} catch (IOException e) {
