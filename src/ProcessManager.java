@@ -98,7 +98,7 @@ class slaveProcessConnection implements Runnable {
       boolean done = false;
 	  
       HashMap<InetAddress,Integer> SocketTable = new HashMap<InetAddress,Integer>();
-     
+      public static Map<Integer,Integer> portMap = Collections.synchronizedMap(new HashMap<Integer,Integer>());
       public slaveProcessConnection(Socket client, int id, ProcessManager pm) {
 			this.SOCK = client;
 			this.id = id;
@@ -142,12 +142,19 @@ class slaveProcessConnection implements Runnable {
 					UserConsole.userProcessMap.remove(pid);
 					
 				}
+				
+			     if(words[0].equals("Hello")){
+			    	 int workerServerPort = Integer.parseInt(words[1]);
+			    	// System.out.println("Worker Port established" + words[1]);
+			    	 portMap.put(id, workerServerPort);
+			     }
 				}
 				
 				ps.println(" \n welcome client " +  id );
 				if(message == null){
 					System.out.println( "Connection " + id + " closed." );
 					ProcessManager.ProcessTable.remove(id);
+					portMap.remove(id);
 					for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
 						if(obj.getValue().getSlaveProcessID() == id){
 							UserConsole.userProcessMap.remove(obj.getKey());
@@ -164,6 +171,7 @@ class slaveProcessConnection implements Runnable {
 				//e.printStackTrace();	
 				System.out.println( "Connection " + id + " closed." );
 				ProcessManager.ProcessTable.remove(id);
+				portMap.remove(id);
 				ArrayList<Integer> keyToRemove = new ArrayList<Integer>();
 				for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
 					if(obj.getValue().getSlaveProcessID() == id){

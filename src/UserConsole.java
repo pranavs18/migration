@@ -17,7 +17,6 @@ public class UserConsole extends Thread implements Serializable{
 	
 	// map to maintain user processes 
     public static Map<Integer,userProcessStructure> userProcessMap = Collections.synchronizedMap(new HashMap<Integer,userProcessStructure>());
-	
 	public static void main(String args[]) throws IOException{
 		ProcessManager pm = new ProcessManager(args[0],Integer.parseInt(args[1]));
 		 System.out.println("Process Manager started : Status Running : IpAddress:" + args[0] + "Port: " + args[1] );
@@ -62,11 +61,14 @@ public class UserConsole extends Thread implements Serializable{
 						   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
 					   }
 					   
-					   System.out.println("Enter the slave process ID from the list on which you want to launch the user process");
+					   System.out.println("Enter the Slave process ID from the list on which you want to launch the user process");
 					   int pid = Integer.parseInt(br.readLine());
 					   System.out.println("Enter the IP address from the list \n");
 					   String ipAddress = br.readLine();
-					   System.out.println("Enter the corresponding port of the IP address you chose above \n");
+					   System.out.println("Enter the corresponding workerserver port of the machine (same slave process ID you chose above\n");
+					   for (Entry<Integer, Integer> obj: slaveProcessConnection.portMap.entrySet()) {
+						   System.out.println(" | Slave Process ID -> " + obj.getKey() + " Worker Server Port -> |" + obj.getValue() + " | ");
+					   }
 					   String port = br.readLine();
 					   String commandName = "Launch";
 					   

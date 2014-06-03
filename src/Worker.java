@@ -4,16 +4,18 @@ import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 
 
 public class Worker extends Thread implements Runnable{
-
+	
 	String MasterIp;
 	int MasterPort;
 	int workerServerPort;
-
+    
 	/* This hashmap maintains a list of all the processed in the worker */
 	public static HashMap<Integer,Long> threadIds = new HashMap<Integer, Long>();
 	
@@ -86,7 +88,7 @@ public class Worker extends Thread implements Runnable{
 		String MasterIp = args[0]; 
 		int MasterPort =  Integer.parseInt(args[1]);
 		int workerServerPort = Integer.parseInt(args[2]);
-		
+	
 		Worker worker = new Worker(MasterIp, MasterPort, workerServerPort);
 		HeartBeat heartBeat = new HeartBeat(MasterIp, MasterPort,workerServerPort);
 		
