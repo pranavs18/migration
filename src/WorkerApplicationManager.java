@@ -391,8 +391,6 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 }
 	@Override
 public void run() {
-
-
 		try {
 			performOperation();
 		} catch (InstantiationException | IllegalAccessException
