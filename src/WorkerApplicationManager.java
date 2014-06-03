@@ -164,7 +164,6 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 		try {
 			tempSocket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

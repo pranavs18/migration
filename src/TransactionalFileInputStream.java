@@ -16,12 +16,12 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	private static final long serialVersionUID = 1L;
 	
     private int currentFileOffset;
-    private FileInputStream in = null;
+   // private FileInputStream in = null;
     private String filename;
     
 	public TransactionalFileInputStream(String filename) throws FileNotFoundException {
 		this.filename = filename;
-		in = new FileInputStream(filename);
+		//in = new FileInputStream(filename);
 		this.currentFileOffset = 0;
 	}
 	
@@ -36,81 +36,12 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 		}
     }
 	
-	/* public String readLine(){
-		 RandomAccessFile raf = null;
-		 String s = null;
-			try {
-				raf = new RandomAccessFile(this.filename, "r");
-			    raf.seek(this.currentFileOffset +1);
-			    
-			    s = raf.readLine();
-			    if(s != null){
-			    	this.currentFileOffset += s.length();
-			    }
-			    
-			    raf.close();
-			} catch (IOException e) {
-		         e.printStackTrace();
-	         }
-		 
-		 return s;	
-	 }
-	*/
-	 @Override
-	    public int read(byte[] bytes, int fileOffset, int total) {
-	        try {
-	            in = BytesInputStream();
-	            int inputStreamBytesRead = 0;
-	            try {
-					inputStreamBytesRead = in.read(bytes, fileOffset, total);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-	            if (inputStreamBytesRead > 0) {
-	                currentFileOffset+=inputStreamBytesRead;
-	            }
-	            return inputStreamBytesRead;
-	        } finally {
-	            if (in != null) {
-	                try {
-						in.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-	            }
-	        }
-	    }
-	 
-	@Override
-    public int read(byte[] bytes) {
-        try {
-            in = BytesInputStream();
-            int inputStreamBytesRead = 0;
-			try {
-				inputStreamBytesRead = in.read(bytes);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-            if (inputStreamBytesRead > 0) {
-                currentFileOffset+=inputStreamBytesRead;
-            }
-            return inputStreamBytesRead;
-        } finally {
-            if (in != null) {
-                try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-            }
-        }
-    }
-
+	
 	@Override
 	public int read() {
         try {
             int readBytes = 0;
-        	in = BytesInputStream();
+        	FileInputStream in = BytesInputStream();
             try {
 				readBytes = in.read();
 			} catch (IOException e) {
@@ -119,13 +50,13 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
             currentFileOffset++;
             return readBytes;
         } finally {
-            if (in != null) {
-                try {
-					in.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-            }
+//            if (in != null) {
+//                try {
+//					in.close();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+            //}
         }
     }
 	

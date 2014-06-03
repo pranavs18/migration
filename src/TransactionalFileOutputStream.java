@@ -10,7 +10,7 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
 	/**
 	 * 
 	 */
-    private RandomAccessFile raf = null;
+    
 	private static final long serialVersionUID = 1L;
     private boolean fileClosed;
     private File file;
@@ -27,27 +27,6 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
         this.currentFileOffset = 0;
     }
 	
-	@Override
-	public void write(byte[] bytes) {
-	
-		 try {
-	            raf = sendBytesOutputStream();
-	            try {
-					raf.write(bytes);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-	            currentFileOffset+=bytes.length;
-	        } finally {
-	            if (raf != null) {
-	                try {
-						raf.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-	            }
-	        }
-	}
 	
 	private RandomAccessFile sendBytesOutputStream() {
 	        RandomAccessFile raf = null;
@@ -59,31 +38,13 @@ public class TransactionalFileOutputStream extends OutputStream implements Seria
 	         }
 	        return raf;
 	    }
-	
-	@Override
-    public void write(byte[] bytes, int fileOffset, int total) {
-        try {
-            raf = sendBytesOutputStream();
-            raf.write(bytes, fileOffset, total);
-            currentFileOffset+=total;
-            
-          }catch (Exception e) {
-	         e.printStackTrace();
-        }finally{
-        	if (raf != null) {
-                try {
-					raf.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				  }
-               }
-           }
-	   }
+
 
 	@Override
 	public void write(int b) {
-		 try {
-	            raf = sendBytesOutputStream();
+		RandomAccessFile raf = null; 
+		try {
+			 raf = sendBytesOutputStream();
 	            try {
 					raf.write(b);
 				} catch (IOException e) {
