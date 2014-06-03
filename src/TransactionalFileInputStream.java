@@ -39,9 +39,10 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
 	
 	@Override
 	public int read() {
+		FileInputStream in = null;
         try {
             int readBytes = 0;
-        	FileInputStream in = BytesInputStream();
+        	 in = BytesInputStream();
             try {
 				readBytes = in.read();
 			} catch (IOException e) {
@@ -50,13 +51,13 @@ public class TransactionalFileInputStream extends InputStream implements Seriali
             currentFileOffset++;
             return readBytes;
         } finally {
-//            if (in != null) {
-//                try {
-//					in.close();
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-            //}
+          if (in != null) {
+              try {
+				in.close();
+			} catch (IOException e) {
+			e.printStackTrace();
+				}
+            }
         }
     }
 	
