@@ -96,7 +96,7 @@ class slaveProcessConnection implements Runnable {
 	  BufferedReader br = null;
       PrintStream ps = null;
       boolean done = false;
-	  
+	  static long timeout=0;
       HashMap<InetAddress,Integer> SocketTable = new HashMap<InetAddress,Integer>();
       public static Map<Integer,Integer> portMap = Collections.synchronizedMap(new HashMap<Integer,Integer>());
       public slaveProcessConnection(Socket client, int id, ProcessManager pm) {
@@ -121,10 +121,24 @@ class slaveProcessConnection implements Runnable {
 				
 				
 				String message = br.readLine();
-				
+
+			
 				//System.out.println("Message"+message);
 				if(message != null){
 				String words[] = message.split(" ");
+
+				// Handling Timeout for a worker slave process, if no hearbeat received for 10 timeout interval, the worker process is declared as dead. 
+				if(!words[0].equals("Hello")){
+					timeout++;
+					if(timeout > 10) {
+					System.out.println("Timeout...no message received from worker thread");
+					for(Entry<Integer,Integer> obj: portMap.entrySet()){
+						if(obj.getValue().equals(words[1])){
+						   ProcessManager.ProcessTable.remove(obj.getKey());
+						}
+					 }
+					}
+				}
 				if(words[0].equals("Migrated")){
 					int pid = Integer.parseInt(words[2]);
 					for(Entry<Integer,userProcessStructure> obj: UserConsole.userProcessMap.entrySet()){
@@ -140,6 +154,7 @@ class slaveProcessConnection implements Runnable {
 					int pid = Integer.parseInt(words[2]);
 					System.out.println("Terminated " +pid );
 					UserConsole.userProcessMap.remove(pid);
+					portMap.remove(id);
 					
 				}
 				

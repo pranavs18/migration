@@ -67,7 +67,7 @@ public class UserConsole extends Thread implements Serializable{
 					   String ipAddress = br.readLine();
 					   System.out.println("Enter the corresponding workerserver port of the machine (same slave process ID you chose above\n");
 					   for (Entry<Integer, Integer> obj: slaveProcessConnection.portMap.entrySet()) {
-						   System.out.println(" | Slave Process ID -> " + obj.getKey() + " Worker Server Port -> |" + obj.getValue() + " | ");
+						   System.out.println(" | Slave Process ID -> " + obj.getKey() + "| Worker Server Port -> " + obj.getValue() + " | ");
 					   }
 					   String port = br.readLine();
 					   String commandName = "Launch";
@@ -163,10 +163,13 @@ public class UserConsole extends Thread implements Serializable{
 					   System.out.println("\n Please launch a process on any machine to migrate the user process");
 				   }
 				   for (Entry<Integer, HashMap<InetAddress,Integer>> obj: ProcessManager.ProcessTable.entrySet()) {
-					   System.out.println(" | Process ID -> " + obj.getKey() + " | IP Address:Port -> |" + obj.getValue() + " | ");
+					   System.out.println(" | IP Address:Port -> |" + obj.getValue() + " | " + " | Process ID -> " + obj.getKey());
 				   }
 				   String destIP = br.readLine();
-				   System.out.println(" \n Please choose the destination Port for the process from the list below to migrate the example process");
+				   System.out.println(" \n Please choose the destination Port for the process from the list below to migrate the user process to another slave machine");
+				   for (Entry<Integer, Integer> obj: slaveProcessConnection.portMap.entrySet()) {
+					   System.out.println(" | Slave Process ID -> " + obj.getKey() + "| Worker Server Port -> " + obj.getValue() + " | ");
+				   }
 				   String destPort = br.readLine();
 				   String commandName = "Migrate";
 				  
