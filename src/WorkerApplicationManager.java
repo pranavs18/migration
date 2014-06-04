@@ -1,15 +1,13 @@
-import java.io.BufferedReader;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 
 
@@ -34,20 +32,18 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
     Long threadID;
 	String processName = message[1];
 	Integer processID = Integer.parseInt(message[2]);
-  // System.out.println("PROCESS" + processID);
 	
-
+/* When we encounter the launch command we start a new instance of the process */
 	if(message[0].equals("Launch")){
 		
 		
-		System.out.println("messages "+ message[0]+" "+message[1]+ " " + message[2] + " " +  message[3]);
+		
 		PrintStream out = null;
 		String []tmp = new String[message.length-3];
-		System.out.println(message.length);
+		
 		if(message.length > 3){
 		for(int i=0;i<message.length -3;i++){
 		  	tmp[i] = message[i+3];
-		  	//System.out.println(tmp[i] + " " + tmp);
 		 } 
 		}
 		
@@ -70,8 +66,6 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 					Class<?> className = Class.forName(processName);
 					Constructor<?> constructor = className.getConstructor(String [].class);
 					process = (MigratableProcess) constructor.newInstance(x);
-			         
-					//command = (MigratableProcess)Class.forName(processName).newInstance();
 					
 				} catch (InstantiationException e) {
 					e.printStackTrace();
@@ -81,25 +75,20 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
                 
 				Thread pThread = new Thread(process);
 				threadID = pThread.getId();
-				System.out.println("Thread Id should be same as grep"+ threadID);
-				Worker.threadIds.put(processID, threadID);
-				
-				System.out.println("map entries: "+Worker.threadIds);
-				
+				Worker.threadIds.put(processID, threadID);				
 				pThread.start();
-				
+				System.out.println(processName + " launched");
 				try {
 					pThread.join();
+					
 				} catch (InterruptedException e) {
 					
-					System.out.println("Thread number "+threadID+" interuupted");
 				}
 				
 				
 				
 				/* After completion The entry in the threadIds Hashmap is removed*/
 				out.println("Terminated "+processName+" "+processID);		
-				System.out.println("map entries exit: "+Worker.threadIds);
 				
 			} catch (ClassNotFoundException e) {
 				
@@ -109,19 +98,17 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 
 	}
 	
-	
+	/* This block stops and removes an executing process from a list */
 	else if(message[0].equals("Remove")){
 		
 		Socket tempSocket = null;
 		try {
 			tempSocket = new Socket(MasterIp,MasterPort);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		Long id = Worker.threadIds.get(processID);
 		PrintStream out = null;
-		
 		
 
 		/* IO operation objects */
@@ -136,8 +123,9 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 			if(t.getId()==id){
 			
 				
-				System.out.println("Id found in thread pool "+id+" actual Thread from pool "+ t.getId());
 		
+		/* We extract the runnable by using reflections and call the suspend method to exit the thread. 
+		 * We then assign the runnable to 0 to make it garbage collectable */
 				        try {
 				            Field field = Thread.class.getDeclaredField("target");
 				            field.setAccessible(true);
@@ -160,7 +148,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 		}
 		out.println("Terminated "+processName+" "+processID);
 		Worker.threadIds.remove(processID);
-		System.out.println("Worker.tread " + Worker.threadIds);
+
 		try {
 			tempSocket.close();
 		} catch (IOException e) {
@@ -184,7 +172,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 		try {
 			slaveMigrationConnection = new Socket(destIp,destPort);
 		} catch (IOException e3) {
-			// TODO Auto-generated catch block
+
 			e3.printStackTrace();
 		}
 
@@ -200,14 +188,13 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 			e2.printStackTrace();
 		}
 		
-		System.out.println("Worker.tread " + Worker.threadIds);
 
 		for(Thread t : Thread.getAllStackTraces().keySet()){
-			System.out.println("Process ID"+ processID+"Id found in thread pool "+id+" actual Thread from pool "+ t.getId());
+			
 			if(t.getId()==id){
 			
-				
-				System.out.println("Id found in thread pool "+id+" actual Thread from pool "+ t.getId());
+				/* We extract the runnable by using reflections and call the suspend method to exit the thread. 
+				 * We then serialize and send this object to the other machine and then deserialize and run it on a new thread */
 				Runnable r = null;
 				        try {
 				            Field field = Thread.class.getDeclaredField("target");
@@ -256,42 +243,14 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 				
 				Worker.threadIds.remove(processID);
 				out.println("SlaveMigrateRequest "+processName+" "+processID+" "+selfIp+" "+selfPort+" "+destIp+" "+destPort+" "+message[0]+message[1]+message[2]+".txt");
-				
-				
-//				InputStreamReader input = null;
-//				BufferedReader in = null;
-//				try {
-//					input = new InputStreamReader(slaveMigrationConnection.getInputStream());
-//					 in = new BufferedReader(input);
-//				} catch (IOException e) {
-//					 
-//					e.printStackTrace();
-//				}
-//				String response = null;
-//				try {
-//					response = in.readLine();
-//				} catch (IOException e) {
-//			
-//					e.printStackTrace();
-//				}
+
 				
 				try {
 					slaveMigrationConnection.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 			}
-				
-				
-//				if(response.equals("MigrationComplete")){
-//					
-//					try {
-//						slaveMigrationConnection.close();
-//					} catch (IOException e) {
-//						e.printStackTrace();
-//					}
-//				}
-				
-				
+		
 				
 				
 			}
@@ -323,8 +282,7 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 		Runnable r = null;
 		try {
 			r = (MigratableProcess)in.readObject();
-			System.out.println(r.toString());
-		
+			System.out.println("Migration of object "+r+" complete");
 			in.close();
 			fileInput.close();
 		
@@ -336,30 +294,14 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 		Long threadid = t.getId();
 		
 		Worker.threadIds.put(processID, threadid);
-		System.out.println("Put Put " + Worker.threadIds);
-		
-		  try {
-	            Field field = Thread.class.getDeclaredField("target");
-	            field.setAccessible(true);
-	            r = (Runnable) field.get(t);
 
-	            if (r == null) r = t;
 
-	            Field removing = r.getClass().getDeclaredField("suspending");
-	            removing.setAccessible(true);
-	            removing.setBoolean(r, false);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-		  
-		  
 		  
 		  
 		  Socket migrateReplytSocket = null;
 		try {
 			migrateReplytSocket = new Socket(MasterIp, MasterPort);
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
 			/* Keeps sending heartbeat with process map and its own server port number */
@@ -368,7 +310,6 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 			try {
 				out = new PrintStream(migrateReplytSocket.getOutputStream());
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			
@@ -379,11 +320,8 @@ public void performOperation() throws InstantiationException, IllegalAccessExcep
 			try {
 				migrateReplytSocket.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-		
 	}
 
 	

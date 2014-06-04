@@ -69,21 +69,21 @@ public class ProcessManager implements MigratableProcess, Runnable,Serializable 
 		try {
 			pm.createConnection();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
 	public void suspend() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
@@ -123,7 +123,7 @@ class slaveProcessConnection implements Runnable {
 				String message = br.readLine();
 
 			
-				//System.out.println("Message"+message);
+				
 				if(message != null){
 				String words[] = message.split(" ");
 
@@ -160,7 +160,6 @@ class slaveProcessConnection implements Runnable {
 				
 			     if(words[0].equals("Hello")){
 			    	 int workerServerPort = Integer.parseInt(words[1]);
-			    	// System.out.println("Worker Port established" + words[1]);
 			    	 portMap.put(id, workerServerPort);
 			     }
 				}
@@ -182,8 +181,7 @@ class slaveProcessConnection implements Runnable {
 		            break;
 				}
 			} catch (Exception e) {
-				//System.exit(1);
-				//e.printStackTrace();	
+				
 				System.out.println( "Connection " + id + " closed." );
 				ProcessManager.ProcessTable.remove(id);
 				portMap.remove(id);
@@ -201,7 +199,7 @@ class slaveProcessConnection implements Runnable {
 					ps.close();
 		            SOCK.close();
 				} catch (IOException e1) {
-					//e1.printStackTrace();
+					
 				}
 	             
 				break;

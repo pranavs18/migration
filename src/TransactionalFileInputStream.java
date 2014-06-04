@@ -10,18 +10,14 @@ import java.io.Serializable;
 
 public class TransactionalFileInputStream extends InputStream implements Serializable{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
     private int currentFileOffset;
-   // private FileInputStream in = null;
+   
     private String filename;
     
 	public TransactionalFileInputStream(String filename) throws FileNotFoundException {
 		this.filename = filename;
-		//in = new FileInputStream(filename);
 		this.currentFileOffset = 0;
 	}
 	

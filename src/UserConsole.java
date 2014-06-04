@@ -46,13 +46,13 @@ public class UserConsole extends Thread implements Serializable{
 				    String temp = "";
 				    if(tmp.length > 1){
 				    for(int i=1;i<tmp.length;i++){
-				    	System.out.println(tmp[i]);
+				    	
 				    	temp = temp + tmp[i] + " ";
 				    }
 				    }
-				    System.out.println(temp);
+				    
 				    pname = tmp[0];
-					System.out.println("Choose Ipaddress:port no of the machine on which you want to launch the process");
+					System.out.println("Please choose the machine on which you want to launch the process");
 					 if(ProcessManager.ProcessTable.entrySet().isEmpty()){
 						   System.out.println("\n Please launch a worker process on any machine to launch the example process on it \n");
 					   }
@@ -123,7 +123,7 @@ public class UserConsole extends Thread implements Serializable{
 						   ipAddress = obj.getValue().getIpAddress();
 						   port = obj.getValue().getSlaveProcessPort();
 						   break;
-						   //System.out.println(ipAddress +" and " + port);
+						   
 					   }
 				   }
 				   Socket MasterSocket = null;
@@ -182,7 +182,7 @@ public class UserConsole extends Thread implements Serializable{
 							   break;
 						   }
 						   break;
-						   //System.out.println(ipAddress +" and " + port);
+						   
 					   }
 				   }
 				   String sendData= commandName + " " + processName + " " + pid + " " + destIP + " " + destPort + " " + slaveIPAddress + " " + slavePort;

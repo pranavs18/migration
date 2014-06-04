@@ -7,10 +7,6 @@ import java.io.Serializable;
 
 public class TransactionalFileOutputStream extends OutputStream implements Serializable {
 
-	/**
-	 * 
-	 */
-    
 	private static final long serialVersionUID = 1L;
     private boolean fileClosed;
     private File file;

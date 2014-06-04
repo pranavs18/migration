@@ -7,8 +7,7 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-//Things to do
-// make time interval of heartbeat for not sending messages say for more than 5 seconds.
+
 public class HeartBeat implements Runnable {
 
 
